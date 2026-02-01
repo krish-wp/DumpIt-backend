@@ -12,7 +12,7 @@ const moderationAnalysisSchema = new mongoose.Schema(
       required: true,
     },
     toxicity: {
-      type: float,
+      type: Number,
       required: true,
     },
     intent: {
@@ -21,7 +21,7 @@ const moderationAnalysisSchema = new mongoose.Schema(
       trim: true,
     },
     selfHarmRisk: {
-      type: float,
+      type: Number,
       required: true,
     },
   },

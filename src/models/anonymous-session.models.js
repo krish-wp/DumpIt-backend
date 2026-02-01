@@ -3,14 +3,14 @@ import mongoose from 'mongoose';
 const sessionSchema = new mongoose.Schema(
   {
     sessionTokenHash: {
-      type: string,
+      type: String,
       required: true,
     },
     reputation: {
-      type: int,
+      type: Number,
       default: 0,
     },
-    coolDownUntil: {
+    cooldownuntil: {
       type: Date,
       required: true,
     },

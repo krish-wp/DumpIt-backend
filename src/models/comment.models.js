@@ -13,7 +13,7 @@ const commentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['Draft', 'Published', 'Processing'],
+      enum: ['Draft', 'Visible', 'Review', 'Hidden'],
       default: 'Draft',
     },
     sessionId: {
