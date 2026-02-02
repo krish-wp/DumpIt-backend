@@ -14,7 +14,8 @@ const connectDB = async () => {
       `DB connected !!! Database Name: ${connectionInstance.connection.name}`
     );
   } catch (error) {
-    console.log('Error While Connecting to database');
+    console.log('Error While Connecting to database', error);
+    throw error;
   }
 };
 
