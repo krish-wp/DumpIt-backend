@@ -5,21 +5,18 @@ const sessionSchema = new mongoose.Schema(
     sessionTokenHash: {
       type: String,
       required: true,
+      unique: true,
     },
     reputation: {
       type: Number,
       default: 0,
     },
-    cooldownuntil: {
-      type: Date,
-      required: true,
-    },
-    lastActiveAt: {
+    expiresAt: {
       type: Date,
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true, collection: 'sessions' }
 );
 
 export const Session = mongoose.model('Session', sessionSchema);
