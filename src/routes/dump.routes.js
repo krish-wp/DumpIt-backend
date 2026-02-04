@@ -1,0 +1,27 @@
+import { Router } from 'express';
+import {
+  createDump,
+  deleteDump,
+  getDumpById,
+  listDumps,
+  updateDump,
+} from '../contollers/dump.controllers.js';
+import commentRouter from './comment.routes.js';
+
+import { requireSession } from '../midddlewares/requireSession.middleware.js';
+import { requireDumpOwner } from '../midddlewares/dumpOwnership.middleware.js';
+
+const router = Router();
+
+router.use(requireSession);
+
+router.route('/').get(listDumps).post(createDump);
+router
+  .route('/:dumpId')
+  .get(getDumpById)
+  .patch(requireDumpOwner, updateDump)
+  .delete(requireDumpOwner, deleteDump);
+
+router.use('/:dumpId/comments', commentRouter);
+
+export default router;

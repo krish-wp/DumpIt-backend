@@ -15,7 +15,10 @@ app.use(express.static('public'));
 
 import sessionRouter from './routes/anonymous-session.routes.js';
 import dumpRouter from './routes/dump.routes.js';
+import commentRouter from './routes/comment.routes.js';
+
 app.use('/api/v1/session', sessionRouter);
 app.use('/api/v1/dump', dumpRouter);
+app.use('/api/v1/comment', commentRouter);
 
 export { app };
