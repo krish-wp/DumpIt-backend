@@ -13,17 +13,21 @@ const model = genAI.getGenerativeModel({
 });
 
 const buildPrompt = (text) => `
-You are a moderation classifier.
-Return JSON only:
+You are a strict content moderation classifier.
+Analyze the text and output ONLY valid JSON that matches this schema exactly:
 {
   "labels": {
-    "hate": 0-1,
-    "harassment": 0-1,
-    "sexual": 0-1,
-    "violence": 0-1,
-    "self_harm": 0-1
+    "hate": 0.0-1.0,
+    "harassment": 0.0-1.0,
+    "sexual": 0.0-1.0,
+    "violence": 0.0-1.0,
+    "self_harm": 0.0-1.0
   }
 }
+Rules:
+- Output JSON only. No extra text, no markdown, no code fences.
+- Use decimal numbers between 0 and 1.
+- If unsure, choose a cautious higher score.
 Text: """${text}"""
 `;
 
