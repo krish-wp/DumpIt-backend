@@ -11,7 +11,7 @@ const dumpSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['Draft', 'Visible', 'Review', 'Hidden'],
+      enum: ['Draft', 'Visible', 'Hidden', 'Processing'],
       default: 'Draft',
     },
     sessionId: {
