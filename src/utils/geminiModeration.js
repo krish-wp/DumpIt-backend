@@ -39,11 +39,37 @@ const decide = (labels) => {
   const selfHarm = labels.self_harm ?? 0;
 
   const reject = hate > 0.7 || violence > 0.7 || sexual > 0.8;
-  const review = harassment > 0.5 || selfHarm > 0.5;
+  const review = harassment > 0.5 || selfHarm > 0.5 || sexual > 0.5;
 
   if (reject) return 'reject';
   if (review) return 'review';
   return 'allow';
+};
+
+const parseJsonFromText = (raw) => {
+  const cleaned = raw
+    .trim()
+    .replace(/^```json\s*/i, '')
+    .replace(/^```\s*/i, '')
+    .replace(/```\s*$/i, '');
+  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+  const jsonText = jsonMatch ? jsonMatch[0] : cleaned;
+
+  try {
+    return JSON.parse(jsonText);
+  } catch {
+    const repaired = jsonText
+      .replace(/\n/g, ' ')
+      .replace(/,\s*}/g, '}')
+      .replace(/,\s*]/g, ']')
+      .replace(/'/g, '"');
+
+    try {
+      return JSON.parse(repaired);
+    } catch {
+      return null;
+    }
+  }
 };
 
 const moderateText = async (text) => {
@@ -55,18 +81,11 @@ const moderateText = async (text) => {
   const result = await model.generateContent(prompt);
   const raw = result.response.text();
 
-  console.log('message', result.response.text);
-  let parsed = null;
-  try {
-    parsed = JSON.parse(raw);
-  } catch {
-    parsed = null;
-  }
+  const parsed = parseJsonFromText(raw);
 
   const labels = parsed?.labels ?? {};
   const decision = decide(labels);
 
-  console.log({ decision, labels, raw, parsed });
   return { decision, labels, raw };
 };
 
