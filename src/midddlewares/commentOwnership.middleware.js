@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { Comment } from '../models/comment.models.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { getSessionFromCookie } from '../utils/getsessionId.js';
+import { Dump } from '../models/dump.models.js';
 
 const requireCommentOwner = asyncHandler(async (req, res, next) => {
   const { dumpId, commentId } = req.params;
@@ -14,14 +15,12 @@ const requireCommentOwner = asyncHandler(async (req, res, next) => {
     return res.status(400).json({ message: 'Invalid comment id' });
   }
 
-  const session = await getSessionFromCookie(req);
-  if (!session) {
-    return res
-      .status(401)
-      .json({ message: 'Session is invalid. Please start a session.' });
+  const dump = await Dump.findById(dumpId);
+  if (!dump) {
+    return res.status(404).json({ message: 'Dump not found' });
   }
 
-  const comment = await Comment.findById(commentId);
+  const comment = await Comment.findOne({ dumpId });
   if (!comment) {
     return res.status(404).json({ message: 'Comment not found' });
   }
