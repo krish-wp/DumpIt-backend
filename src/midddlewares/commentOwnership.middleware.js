@@ -15,12 +15,15 @@ const requireCommentOwner = asyncHandler(async (req, res, next) => {
     return res.status(400).json({ message: 'Invalid comment id' });
   }
 
+  const session = req.session;
+  
+
   const dump = await Dump.findById(dumpId);
   if (!dump) {
     return res.status(404).json({ message: 'Dump not found' });
   }
 
-  const comment = await Comment.findOne({ dumpId });
+  const comment = await Comment.findOne({ _id: commentId, dumpId });
   if (!comment) {
     return res.status(404).json({ message: 'Comment not found' });
   }
