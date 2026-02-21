@@ -11,7 +11,11 @@ const publishComment = asyncHandler(async (req, res) => {
     return res.status(500).json({ message: 'Comment not loaded' });
   }
 
-  const moderationResult = await moderateText(comment.text);
+  const moderationResult = await moderateText(
+    comment.text,
+    'COMMENT',
+    comment._id
+  );
 
   if (moderationResult.decision === 'reject') {
     comment.status = 'Hidden';
@@ -53,6 +57,10 @@ const createComment = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: 'Dump not found' });
   }
 
+  if (dump.status === 'Draft' || dump.status === 'Hidden') {
+    return res.status(404).json({ message: 'Dump not Visible' });
+  }
+
   const comment = await Comment.create({
     text: text.trim(),
     dumpId: dump._id,
@@ -79,9 +87,11 @@ const listComments = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: 'Dump not found' });
   }
 
-  const comments = await Comment.find({ dumpId, status: 'Visible' }).sort({
-    createdAt: -1,
-  });
+  const comments = await Comment.find({ dumpId })
+    .select('-dumpId -sessionId')
+    .sort({
+      createdAt: -1,
+    });
 
   return res.status(200).json({ count: comments.length, comments });
 });

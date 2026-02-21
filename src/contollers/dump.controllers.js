@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { Dump } from '../models/dump.models.js';
-import { getSessionFromCookie } from '../utils/getsessionId.js';
 import { moderateText } from '../utils/geminiModeration.js';
 
 const publishDump = asyncHandler(async (req, res) => {
@@ -21,7 +20,7 @@ const publishDump = asyncHandler(async (req, res) => {
   dump.status = 'Processing';
   await dump.save();
 
-  const moderationResult = await moderateText(dump.text);
+  const moderationResult = await moderateText(dump.text, 'DUMP', dumpId);
 
   if (moderationResult.decision === 'reject') {
     dump.status = 'Hidden';
@@ -47,19 +46,11 @@ const publishDump = asyncHandler(async (req, res) => {
 const createDump = asyncHandler(async (req, res) => {
   const { text, topic, action } = req.body;
 
-  const normalizedAction = action?.trim();
+  const normalizedAction = action?.trim() || 'Draft';
   const allowedActions = ['Draft', 'Publish'];
 
   if (!text?.trim()) {
     return res.status(400).json({ message: 'Text is required' });
-  }
-  console.log(normalizedAction);
-
-  console.log('here');
-  if (normalizedAction !== undefined) {
-    if (!allowedActions.includes(normalizedAction)) {
-      return res.status(400).json({ message: 'Invalid action this one' });
-    }
   }
 
   const session = req.session;
