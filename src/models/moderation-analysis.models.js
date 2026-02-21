@@ -15,11 +15,6 @@ const moderationAnalysisSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    intent: {
-      type: String,
-      required: true,
-      trim: true,
-    },
     selfHarmRisk: {
       type: Number,
       required: true,
