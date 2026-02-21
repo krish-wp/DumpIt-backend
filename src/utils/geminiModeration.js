@@ -2,6 +2,9 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import dotenv from 'dotenv';
 dotenv.config();
 
+import { ModerationAction } from '../models/moderation-action.models.js';
+import { ModerationAnalysis } from '../models/moderation-analysis.models.js';
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({
   model: 'gemini-3-flash-preview',
@@ -11,6 +14,8 @@ const model = genAI.getGenerativeModel({
     topK: 5,
   },
 });
+let toxic = 0;
+let self_harm = 0;
 
 const buildPrompt = (text) => `
 You are a strict content moderation classifier.
@@ -40,6 +45,9 @@ const decide = (labels) => {
 
   const reject = hate > 0.7 || violence > 0.7 || sexual > 0.8;
   const review = harassment > 0.5 || selfHarm > 0.5 || sexual > 0.5;
+
+  toxic = (hate + violence + sexual + harassment + selfHarm) / 5;
+  self_harm = selfHarm;
 
   if (reject) return 'reject';
   if (review) return 'review';
@@ -72,7 +80,7 @@ const parseJsonFromText = (raw) => {
   }
 };
 
-const moderateText = async (text) => {
+const moderateText = async (text, type, id) => {
   if (!text?.trim()) {
     return { decision: 'allow', labels: {}, raw: null };
   }
@@ -84,7 +92,27 @@ const moderateText = async (text) => {
   const parsed = parseJsonFromText(raw);
 
   const labels = parsed?.labels ?? {};
+
   const decision = decide(labels);
+
+  let act = 'ALLOW';
+  if (decision === 'reject' || decision === 'review') {
+    act = 'HIDE';
+  }
+
+  await ModerationAction.create({
+    targetType: type,
+    targetId: id,
+    action: act,
+    reason: 'oky for now will change it later',
+  });
+
+  await ModerationAnalysis.create({
+    targetType: type,
+    targetId: id,
+    toxicity: toxic,
+    selfHarmRisk: self_harm,
+  });
 
   return { decision, labels, raw };
 };
