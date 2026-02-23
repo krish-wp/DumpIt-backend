@@ -4,6 +4,7 @@ import {
   deleteDump,
   getDumpById,
   listDumps,
+  listPublicDumps,
   updateDump,
 } from '../contollers/dump.controllers.js';
 import commentRouter from './comment.routes.js';
@@ -16,6 +17,7 @@ const router = Router();
 
 router.use(requireSession);
 
+router.route('/public').get(listPublicDumps);
 router.route('/').get(listDumps).post(upload.none(), createDump);
 router
   .route('/:dumpId')

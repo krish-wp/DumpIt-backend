@@ -86,6 +86,19 @@ const listDumps = asyncHandler(async (req, res) => {
   return res.status(200).json({ count: dumps.length, dumps });
 });
 
+const listPublicDumps = asyncHandler(async (req, res) => {
+  const { topic } = req.query;
+  const filter = { status: 'Visible' };
+
+  if (topic) filter.topic = topic;
+
+  const dumps = await Dump.find(filter)
+    .select('-sessionId')
+    .sort({ createdAt: -1 });
+
+  return res.status(200).json({ count: dumps.length, dumps });
+});
+
 const getDumpById = asyncHandler(async (req, res) => {
   const { dumpId } = req.params;
 
@@ -148,4 +161,11 @@ const deleteDump = asyncHandler(async (req, res) => {
   return res.status(200).json({ message: 'Dump deleted' });
 });
 
-export { createDump, listDumps, getDumpById, updateDump, deleteDump };
+export {
+  createDump,
+  listDumps,
+  listPublicDumps,
+  getDumpById,
+  updateDump,
+  deleteDump,
+};
