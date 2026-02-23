@@ -96,6 +96,29 @@ const listComments = asyncHandler(async (req, res) => {
   return res.status(200).json({ count: comments.length, comments });
 });
 
+const listPublicComments = asyncHandler(async (req, res) => {
+  const { dumpId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(dumpId)) {
+    return res.status(400).json({ message: 'Invalid dump id' });
+  }
+
+  const dump = await Dump.findById(dumpId);
+  if (!dump) {
+    return res.status(404).json({ message: 'Dump not found' });
+  }
+
+  if (dump.status !== 'Visible') {
+    return res.status(404).json({ message: 'Dump not visible' });
+  }
+
+  const comments = await Comment.find({ dumpId, status: 'Visible' })
+    .select('-dumpId -sessionId')
+    .sort({ createdAt: -1 });
+
+  return res.status(200).json({ count: comments.length, comments });
+});
+
 const getCommentById = asyncHandler(async (req, res) => {
   return res.status(501).json({ message: 'Not implemented' });
 });
@@ -140,6 +163,7 @@ const deleteComment = asyncHandler(async (req, res) => {
 export {
   createComment,
   listComments,
+  listPublicComments,
   getCommentById,
   updateComment,
   deleteComment,
