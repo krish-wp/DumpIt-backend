@@ -3,7 +3,8 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { Comment } from '../models/comment.models.js';
 import { Dump } from '../models/dump.models.js';
 
-import { moderateText } from '../utils/geminiModeration.js';
+// import { moderateText } from '../utils/geminiModeration.js';
+import { moderateText } from '../utils/moderation.ollama.js';
 
 const publishComment = asyncHandler(async (req, res) => {
   const comment = req.comment;

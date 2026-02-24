@@ -17,7 +17,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@types/node": "^25.2.0",
-    "eslint": "^9.39.2",
+    "eslint": "^10.0.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "globals": "^17.2.0",
@@ -38,6 +38,7 @@
     "multer": "^2.0.2",
     "node-fetch": "^3.3.2",
     "nodemon": "^3.1.11",
+    "ollama": "^0.6.3",
     "parser": "^0.1.4",
     "uuid": "^13.0.0"
   }

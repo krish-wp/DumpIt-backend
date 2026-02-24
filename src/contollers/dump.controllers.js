@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { Dump } from '../models/dump.models.js';
-import { moderateText } from '../utils/geminiModeration.js';
+// import { moderateText } from '../utils/geminiModeration.js';
+import { moderateText } from '../utils/moderation.ollama.js';
 
 const publishDump = asyncHandler(async (req, res) => {
   const dumpId = req.params.dumpId;
