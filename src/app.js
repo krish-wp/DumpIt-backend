@@ -13,7 +13,7 @@ app.use(express.static('public'));
 
 const allowedOrigin =
   process.env.NODE_ENV === 'production'
-    ? 'https://your-frontend-name.onrender.com'
+    ? 'https://dumpit-frontend.onrender.com/'
     : 'http://localhost:5500';
 
 app.use(
