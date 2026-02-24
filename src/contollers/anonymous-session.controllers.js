@@ -16,6 +16,8 @@ const createSession = asyncHandler(async (req, res) => {
 
   res.cookie('sessionId', newSessionId, {
     httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
     maxAge: SESSION_DURATION,
   });
 

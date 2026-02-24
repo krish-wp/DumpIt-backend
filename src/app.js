@@ -11,13 +11,14 @@ app.use(express.urlencoded({ extended: true, limit: '16kb' }));
 app.use(cookieParser());
 app.use(express.static('public'));
 
+const allowedOrigin =
+  process.env.NODE_ENV === 'production'
+    ? 'https://your-frontend-name.onrender.com'
+    : 'http://localhost:5500';
+
 app.use(
   cors({
-    origin: [
-      'http://127.0.0.1:5500',
-      'http://localhost:5500',
-      'https://dumpit-frontend.onrender.com/',
-    ],
+    origin: allowedOrigin,
     credentials: true,
   })
 );
