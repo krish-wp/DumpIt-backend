@@ -52,8 +52,8 @@ DumpIt Backend is an anonymous, moderation-first REST API for posting "dumps" an
 
 - **Framework**: Express 5 with modular separation:
   - Route layer (`src/routes/*`)
-  - Controller layer (`src/contollers/*`)
-  - Middleware layer (`src/midddlewares/*`)
+  - Controller layer (`src/controllers/*`)
+  - Middleware layer (`src/middlewares/*`)
   - Model layer (`src/models/*`)
   - Utility layer (`src/utils/*`)
 - **Database**: MongoDB with Mongoose ODM.

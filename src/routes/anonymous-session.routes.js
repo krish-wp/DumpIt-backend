@@ -2,7 +2,7 @@ import { Router } from 'express';
 import {
   openSession,
   deleteSession,
-} from '../contollers/anonymous-session.controllers.js';
+} from '../controllers/anonymous-session.controllers.js';
 
 const router = Router();
 

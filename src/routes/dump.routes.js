@@ -6,13 +6,15 @@ import {
   listDumps,
   listPublicDumps,
   updateDump,
-} from '../contollers/dump.controllers.js';
-import { listPublicComments } from '../contollers/comment.controllers.js';
+} from '../controllers/dump.controllers.js';
+import { listPublicComments } from '../controllers/comment.controllers.js';
 import commentRouter from './comment.routes.js';
 
-import { requireSession } from '../midddlewares/requireSession.middleware.js';
-import { requireDumpOwner } from '../midddlewares/dumpOwnership.middleware.js';
-import { upload } from '../midddlewares/multer.middleware.js';
+import { requireSession } from '../middlewares/requireSession.middleware.js';
+import { requireDumpOwner } from '../middlewares/dumpOwnership.middleware.js';
+import { upload } from '../middlewares/multer.middleware.js';
+import { validate } from '../middlewares/validate.middleware.js';
+import { createDumpSchema, updateDumpSchema } from '../utils/validators.js';
 
 const router = Router();
 
@@ -20,11 +22,11 @@ router.route('/public').get(listPublicDumps);
 router.route('/public/:dumpId/comments').get(listPublicComments);
 
 router.use(requireSession);
-router.route('/').get(listDumps).post(upload.none(), createDump);
+router.route('/').get(listDumps).post(upload.none(), validate(createDumpSchema), createDump);
 router
   .route('/:dumpId')
   .get(getDumpById)
-  .patch(requireDumpOwner, updateDump)
+  .patch(requireDumpOwner, validate(updateDumpSchema), updateDump)
   .delete(requireDumpOwner, deleteDump);
 
 router.use('/:dumpId/comments', commentRouter);
