@@ -2,7 +2,6 @@ import ollama from 'ollama';
 
 import { ModerationAction } from '../models/moderation-action.models.js';
 import { ModerationAnalysis } from '../models/moderation-analysis.models.js';
-import { describe } from 'node:test';
 
 let toxic = 0;
 let self_harm = 0;
@@ -44,51 +43,20 @@ const decide = async (labels) => {
   return 'allow';
 };
 
-// const parseJsonFromText = (raw) => {
-//   const cleaned = raw
-//     .trim()
-//     .replace(/^```json\s*/i, '')
-//     .replace(/^```\s*/i, '')
-//     .replace(/```\s*$/i, '');
-//   const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
-//   const jsonText = jsonMatch ? jsonMatch[0] : cleaned;
-
-//   try {
-//     return JSON.parse(jsonText);
-//   } catch {
-//     const repaired = jsonText
-//       .replace(/\n/g, ' ')
-//       .replace(/,\s*}/g, '}')
-//       .replace(/,\s*]/g, ']')
-//       .replace(/'/g, '"');
-
-//     try {
-//       return JSON.parse(repaired);
-//     } catch {
-//       return null;
-//     }
-//   }
-// };
-
 const moderateText = async (text, type, id) => {
   if (!text?.trim()) {
     return { decision: 'allow', labels: {}, raw: null };
   }
 
   const prompt = buildPrompt(text.trim());
-  console.log(prompt);
   const result = await ollama.chat({
     model: 'gpt-oss:120b-cloud',
     messages: [{ role: 'user', content: prompt }],
   });
-  console.log('result', result);
   const raw = result.message.content;
 
   const rawObj = JSON.parse(raw);
-
   const labels = rawObj?.labels ?? {};
-
-  console.log(labels);
 
   const decision = await decide(labels);
 
@@ -101,7 +69,7 @@ const moderateText = async (text, type, id) => {
     targetType: type,
     targetId: id,
     action: act,
-    reason: 'oky for now will change it later',
+    reason: 'Automated moderation decision',
   });
 
   await ModerationAnalysis.create({
@@ -110,7 +78,7 @@ const moderateText = async (text, type, id) => {
     toxicity: toxic,
     selfHarmRisk: self_harm,
   });
-  console.log({ decision, labels });
+
   return { decision, labels };
 };
 
